@@ -1,0 +1,24 @@
+{
+    "compilerOptions": {
+        "baseUrl": ".", // This must be specified if "paths" is.
+        "paths": {
+            "wasm-game-of-life/wasm_game_of_life": [
+                "node_modules/wasm-game-of-life/wasm_game_of_life"
+            ],
+            "wasm-game-of-life/wasm_game_of_life_bg": [
+                "node_modules/wasm-game-of-life/wasm_game_of_life_bg"
+            ]
+        },
+        "outDir": "./dist/",
+        "sourceMap": true,
+        "strictNullChecks": false,
+        "module": "esnext",
+        "target": "es5",
+        "allowJs": true,
+        "typeRoots": [
+            "./node_modules/wasm-game-of-life",
+            "./node_modules/@types"
+        ]
+    },
+    "include": ["./src/"]
+}

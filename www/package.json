@@ -1,0 +1,47 @@
+{
+    "name": "wasm-game-of-life",
+    "version": "1.0.0",
+    "description": "Conway's Game of Life'",
+    "main": "bootstrap.ts",
+    "bin": {
+        "wasm-game-of-life": ".bin/wasm-game-of-life.js"
+    },
+    "scripts": {
+        "build": "webpack --config webpack.config.js -p",
+        "start": "webpack-dev-server"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/daviur/wasm-game-of-life.git"
+    },
+    "keywords": [
+        "webassembly",
+        "wasm",
+        "rust",
+        "webpack",
+        "game of life"
+    ],
+    "author": "David I. Urbina <opensource@davidurbina.net>",
+    "license": "(MIT OR Apache-2.0)",
+    "bugs": {
+        "url": "https://github.com/daviur/wasm-game-of-life/issues"
+    },
+    "homepage": "https://github.com/daviur/wasm-game-of-life#readme",
+    "dependencies": {
+        "wasm-game-of-life": "file:../pkg"
+    },
+    "devDependencies": {
+        "awesome-typescript-loader": "^5.2.1",
+        "copy-webpack-plugin": "^5.0.0",
+        "css-loader": "^3.2.1",
+        "html-webpack-plugin": "^3.2.0",
+        "node-sass": "^4.13.0",
+        "sass-loader": "^8.0.0",
+        "source-map-loader": "^0.2.4",
+        "style-loader": "^1.0.1",
+        "typescript": "^3.7.3",
+        "webpack": "^4.29.3",
+        "webpack-cli": "^3.1.0",
+        "webpack-dev-server": "^3.1.5"
+    }
+}
