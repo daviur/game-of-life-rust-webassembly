@@ -23,19 +23,19 @@ module.exports = {
                 test: /\.scss$/i,
                 use: ['style-loader', 'css-loader', 'sass-loader'],
             },
-            {
-                enforce: 'pre',
-                test: /\.js$/,
-                loader: 'source-map-loader',
-            },
+            // {
+            //     enforce: 'pre',
+            //     test: /\.js$/,
+            //     loader: 'source-map-loader',
+            // },
         ],
     },
-    devtool: 'source-map',
+    // devtool: 'source-map',
     plugins: [
         new HtmlWebpackPlugin({
             template: 'src/index.html',
         }),
-        // new CopyWebpackPlugin(['src/index.html']),
+        // new CopyWebpackPlugin(['src/js/p5.min.js']),
     ],
     // devServer: {
     //     host: '0.0.0.0',

@@ -1,3 +1,5 @@
+import * as p5 from 'p5';
+
 import '../css/main.scss';
 import { Universe, Cell } from 'wasm-game-of-life/wasm_game_of_life';
 
@@ -10,187 +12,168 @@ const cleanButtom = <HTMLButtonElement>document.getElementById('clean');
 const playPauseButtom = <HTMLButtonElement>(
     document.getElementById('play-pause')
 );
+playPauseButtom.textContent = '⏸';
+
 const rangeFPS = <HTMLInputElement>document.getElementById('fps');
 
-let fps = rangeFPS.valueAsNumber;
-let fpsInterval: number;
-let then: number;
+const canvas = <HTMLCanvasElement>(
+    document.getElementById('game-of-life-canvas')
+);
 
-const startAnimating = (fps: number) => {
-    fpsInterval = 1000 / fps;
-    then = window.performance.now();
-    play();
+const BACKGROUND = '#000000';
+const GRID_COLOR = '#000000';
+const DEAD_COLOR = '#000000';
+const ALIVE_COLOR = 'lightblue';
+const CELL_SIZE = 2;
+const COLUMNS = 256;
+const ROWS = 128;
+
+let fps = rangeFPS.valueAsNumber;
+
+// Construct the universe, and set its columns and rows.
+const universe = Universe.new(COLUMNS, ROWS);
+
+let isPaused = false;
+
+const sketch = (s: p5) => {
+    s.setup = () => {
+        s.createCanvas(
+            (CELL_SIZE + 1) * COLUMNS + 1,
+            (CELL_SIZE + 1) * ROWS + 1,
+        );
+        s.background(BACKGROUND);
+        drawGrid();
+        s.frameRate(fps);
+    };
+
+    s.draw = () => {
+        // ! debugger;
+        drawCells();
+        if (!isPaused) {
+            fpsCounter.render();
+            universe.tick();
+        }
+    };
+
+    const drawGrid = () => {
+        s.strokeWeight(1);
+        s.stroke(GRID_COLOR);
+
+        // Columns
+        for (let col = 0; col <= COLUMNS; col++) {
+            s.line(
+                col * (CELL_SIZE + 1),
+                0,
+                col * (CELL_SIZE + 1),
+                (CELL_SIZE + 1) * ROWS,
+            );
+        }
+
+        // Rows
+        for (let row = 0; row <= ROWS; row++) {
+            s.line(
+                0,
+                row * (CELL_SIZE + 1),
+                (CELL_SIZE + 1) * COLUMNS,
+                row * (CELL_SIZE + 1),
+            );
+        }
+    };
+
+    const drawCells = () => {
+        const cellsPtr = universe.cells();
+        const cells = new Uint8Array(memory.buffer, cellsPtr, COLUMNS * ROWS);
+        const deltasPtr = universe.deltas();
+        const deltas = new Uint8Array(memory.buffer, deltasPtr, COLUMNS * ROWS);
+
+        // Dead cells
+        s.fill(DEAD_COLOR);
+        for (let row = 0; row < ROWS; row++) {
+            for (let col = 0; col < COLUMNS; col++) {
+                const idx = getIndex(row, col);
+
+                if (cells[idx] !== Cell.Dead) {
+                    continue;
+                }
+
+                if (deltas[idx] === 1) {
+                    s.rect(
+                        col * (CELL_SIZE + 1) + 1,
+                        row * (CELL_SIZE + 1) + 1,
+                        CELL_SIZE,
+                        CELL_SIZE,
+                    );
+                }
+            }
+        }
+
+        // Alive cells
+        s.fill(ALIVE_COLOR);
+        for (let row = 0; row < ROWS; row++) {
+            for (let col = 0; col < COLUMNS; col++) {
+                const idx = getIndex(row, col);
+
+                if (cells[idx] !== Cell.Alive) {
+                    continue;
+                }
+
+                if (deltas[idx] === 1) {
+                    s.rect(
+                        col * (CELL_SIZE + 1) + 1,
+                        row * (CELL_SIZE + 1) + 1,
+                        CELL_SIZE,
+                        CELL_SIZE,
+                    );
+                }
+            }
+        }
+    };
+
+    const getIndex = (row: number, column: number) => {
+        return row * COLUMNS + column;
+    };
 };
+
+const myp5 = new p5(sketch, canvas);
 
 const play = () => {
     playPauseButtom.textContent = '⏸';
-    renderLoop();
+    isPaused = false;
 };
 
 const pause = () => {
     playPauseButtom.textContent = '▶';
-    cancelAnimationFrame(animationId);
-    animationId = null;
+    isPaused = true;
 };
-
-let animationId = null;
-
-const isPaused = () => {
-    return animationId === null;
-};
-
-let elapsed: number;
-let now: number;
-
-const renderLoop = () => {
-    now = window.performance.now();
-    elapsed = now - then;
-
-    if (elapsed > fpsInterval) {
-        then = now - (elapsed % fpsInterval);
-        fpsCounter.render();
-
-        // ! debugger;
-        universe.tick();
-        drawGrid();
-        drawCells();
-    }
-    animationId = requestAnimationFrame(renderLoop);
-};
-
-const CELL_SIZE = 15;
-const GRID_COLOR = '#555555';
-const DEAD_COLOR = '#FFFFFF';
-const ALIVE_COLOR = '#000000';
-const width = 32;
-const height = 32;
-
-// Construct the universe, and set its width and height.
-const universe = Universe.new(width, height);
-
-// Give the canvas room for all of our cells and a 1px border
-// around each of them.
-const canvas = <HTMLCanvasElement>(
-    document.getElementById('game-of-life-canvas')
-);
-canvas.height = (CELL_SIZE + 1) * height + 1;
-canvas.width = (CELL_SIZE + 1) * width + 1;
-
-const ctx = canvas.getContext('2d');
-
-const drawGrid = () => {
-    ctx.beginPath();
-    ctx.strokeStyle = GRID_COLOR;
-
-    // Vertical lines.
-    for (let i = 0; i <= width; i++) {
-        ctx.moveTo(i * (CELL_SIZE + 1) + 1, 0);
-        ctx.lineTo(i * (CELL_SIZE + 1) + 1, (CELL_SIZE + 1) * height + 1);
-    }
-
-    // Horizontal lines.
-    for (let j = 0; j <= height; j++) {
-        ctx.moveTo(0, j * (CELL_SIZE + 1) + 1);
-        ctx.lineTo((CELL_SIZE + 1) * width + 1, j * (CELL_SIZE + 1) + 1);
-    }
-
-    ctx.stroke();
-};
-
-const getIndex = (row, column) => {
-    return row * width + column;
-};
-
-const drawCells = () => {
-    const cellsPtr = universe.cells();
-    const cells = new Uint8Array(memory.buffer, cellsPtr, width * height);
-    const deltasPtr = universe.deltas();
-    const deltas = new Uint8Array(memory.buffer, deltasPtr, width * height);
-
-    // Dead cells.
-    ctx.fillStyle = DEAD_COLOR;
-    for (let row = 0; row < height; row++) {
-        for (let col = 0; col < width; col++) {
-            const idx = getIndex(row, col);
-
-            if (cells[idx] !== Cell.Dead) {
-                continue;
-            }
-
-            if (deltas[idx] === 1) {
-                ctx.fillRect(
-                    col * (CELL_SIZE + 1) + 1,
-                    row * (CELL_SIZE + 1) + 1,
-                    CELL_SIZE,
-                    CELL_SIZE
-                );
-            }
-        }
-    }
-
-    // Alive cells.
-    ctx.fillStyle = ALIVE_COLOR;
-    for (let row = 0; row < height; row++) {
-        for (let col = 0; col < width; col++) {
-            const idx = getIndex(row, col);
-
-            if (cells[idx] !== Cell.Alive) {
-                continue;
-            }
-
-            if (deltas[idx] === 1) {
-                ctx.fillRect(
-                    col * (CELL_SIZE + 1) + 1,
-                    row * (CELL_SIZE + 1) + 1,
-                    CELL_SIZE,
-                    CELL_SIZE
-                );
-            }
-        }
-    }
-};
-
-canvas.addEventListener('click', event => {
-    const boundingRect = canvas.getBoundingClientRect();
-
-    const scaleX = canvas.width / boundingRect.width;
-    const scaleY = canvas.height / boundingRect.height;
-
-    const canvasLeft = (event.clientX - boundingRect.left) * scaleX;
-    const canvasTop = (event.clientY - boundingRect.top) * scaleY;
-
-    const row = Math.min(Math.floor(canvasTop / (CELL_SIZE + 1)), height - 1);
-    const col = Math.min(Math.floor(canvasLeft / (CELL_SIZE + 1)), width - 1);
-
-    universe.toggle_cell(row, col);
-
-    // drawGrid();
-    drawCells();
-});
 
 playPauseButtom.addEventListener('click', event => {
-    if (isPaused()) {
+    if (isPaused) {
         play();
     } else {
         pause();
     }
 });
 
+canvas.addEventListener('click', event => {
+    const row = Math.min(Math.floor(myp5.mouseY / (CELL_SIZE + 1)), ROWS - 1);
+    const col = Math.min(
+        Math.floor(myp5.mouseX / (CELL_SIZE + 1)),
+        COLUMNS - 1,
+    );
+    universe.toggle_cell(row, col);
+});
+
 restartButtom.addEventListener('click', event => {
     universe.restart();
-    drawGrid();
-    drawCells();
 });
 
 cleanButtom.addEventListener('click', event => {
     universe.clean();
-    drawGrid();
-    drawCells();
 });
 
 rangeFPS.addEventListener('change', event => {
     fps = rangeFPS.valueAsNumber;
-    fpsInterval = 1000 / fps;
+    myp5.frameRate(fps);
 });
 
 const fpsCounter = new (class {
@@ -239,7 +222,3 @@ const fpsCounter = new (class {
   `.trim();
     }
 })();
-
-drawGrid();
-drawCells();
-startAnimating(fps);
