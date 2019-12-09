@@ -2,11 +2,11 @@
 
 **An implementation of the cellular automata.**
 
-Based on the [Rust 🦀 and WebAssembly 🕸 book](https://rustwasm.github.io/docs/book)
+Based on the [Rust 🦀 and WebAssembly 🕸 book.](https://rustwasm.github.io/docs/book)
 
 ## 💬 About
 
-This implementation fo Conway's game of Life makes use of the following technologies:
+This [implementation](https://github.com/daviur/game-of-life/blob/master/www/dist) fo Conway's game of Life makes use of the following technologies:
 
 -   Rust 🦀
 -   WebAssembly 🕸
