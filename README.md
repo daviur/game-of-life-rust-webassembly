@@ -54,5 +54,5 @@ wasm-pack publish
 
 ## ™️ License
 
--   [MIT](https://github.com/daviur/game-of-life/LICENSE_MIT)
--   [APACHE 2.0](https://github.com/daviur/game-of-life/LICENSE_APACHE)
+-   [MIT](https://github.com/daviur/game-of-life/blob/master/LICENSE_MIT)
+-   [APACHE 2.0](https://github.com/daviur/game-of-life/blob/master/LICENSE_APACHE)
