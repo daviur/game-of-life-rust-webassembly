@@ -12,7 +12,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/daviur/wasm-game-of-life.git"
+        "url": "git+https://github.com/daviur/game-of-life.git"
     },
     "keywords": [
         "webassembly",
@@ -21,12 +21,12 @@
         "webpack",
         "game of life"
     ],
-    "author": "David I. Urbina <opensource@davidurbina.net>",
+    "author": "David I. Urbina <david.urbina@acm.org>",
     "license": "(MIT OR Apache-2.0)",
     "bugs": {
-        "url": "https://github.com/daviur/wasm-game-of-life/issues"
+        "url": "https://github.com/daviur/game-of-life/issues"
     },
-    "homepage": "https://github.com/daviur/wasm-game-of-life#readme",
+    "homepage": "https://github.com/daviur/game-of-life#readme",
     "dependencies": {
         "p5": "0.10.2",
         "wasm-game-of-life": "file:../pkg"
