@@ -8,7 +8,7 @@ Based on the [Rust 🦀 and WebAssembly 🕸 book.](https://rustwasm.github.io/d
 
 ## 💬 About
 
-This [implementation](https://www.davidurbina.net/game-of-life/docs/index.html) fo Conway's Game of Life makes use of the following technologies:
+This [implementation](https://www.davidurbina.net/game-of-life/) fo Conway's Game of Life makes use of the following technologies:
 
 -   Rust 🦀
 -   WebAssembly 🕸
