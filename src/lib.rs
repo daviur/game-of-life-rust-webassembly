@@ -167,7 +167,6 @@ impl Universe {
             .collect();
 
         let deltas = (0..width * height).map(|_i| true).collect();
-        // panic!();
 
         Universe {
             width,
