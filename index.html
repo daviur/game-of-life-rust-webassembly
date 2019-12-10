@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Conway's Game of Life!</title>
+    </head>
+
+    <body>
+        <noscript
+            >This page contains webassembly and javascript content, please
+            enable javascript in your browser.</noscript
+        >
+        <div class="game-of-life">
+            <span>
+                <button class="blue_btn" id="restart">Restart</button>
+                <button class="blue_btn" id="play-pause"></button>
+                <button class="blue_btn" id="clean">Clean</button>
+                <input id="fps" type="range" min="5" max="120" value="10" step="5">FPS</input>
+                <div id="fps-counter"></div>  
+            </span>
+            <div id="game-of-life-canvas"></div>            
+        </div>
+    <script type="text/javascript" src="bundle.js"></script></body>
+</html>
