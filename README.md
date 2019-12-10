@@ -6,7 +6,7 @@ Based on the [Rust 🦀 and WebAssembly 🕸 book.](https://rustwasm.github.io/d
 
 ## 💬 About
 
-This [implementation](https://github.com/daviur/game-of-life/blob/master/index.html) fo Conway's game of Life makes use of the following technologies:
+This [implementation](https://github.com/daviur/game-of-life/blob/master/www/dist/index.html) fo Conway's game of Life makes use of the following technologies:
 
 -   Rust 🦀
 -   WebAssembly 🕸
