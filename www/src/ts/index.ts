@@ -23,10 +23,10 @@ const canvas = <HTMLCanvasElement>(
 const BACKGROUND = '#000000';
 const GRID_COLOR = '#000000';
 const DEAD_COLOR = '#000000';
-const ALIVE_COLOR = 'lightblue';
+const ALIVE_COLOR = '#FF0000';
 const CELL_SIZE = 2;
-const COLUMNS = 256;
-const ROWS = 128;
+const COLUMNS = 512;
+const ROWS = 256;
 
 let fps = rangeFPS.valueAsNumber;
 
