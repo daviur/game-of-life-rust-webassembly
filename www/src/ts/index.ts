@@ -1,6 +1,9 @@
 import * as p5 from 'p5';
 
 import '../css/main.scss';
+
+import { FpsCounter } from './fpscounter';
+
 import { Universe, Cell } from 'wasm-game-of-life/wasm_game_of_life';
 
 // Import the WebAssembly memory at the top of the file.
@@ -9,46 +12,51 @@ import { memory } from 'wasm-game-of-life/wasm_game_of_life_bg';
 // Getting input controls
 const restartButtom = <HTMLButtonElement>document.getElementById('restart');
 const cleanButtom = <HTMLButtonElement>document.getElementById('clean');
+const rangeFPS = <HTMLInputElement>document.getElementById('fps');
 const playPauseButtom = <HTMLButtonElement>(
     document.getElementById('play-pause')
 );
 playPauseButtom.textContent = '⏸';
 
-const rangeFPS = <HTMLInputElement>document.getElementById('fps');
+const fpsCounter = new FpsCounter(
+    <HTMLDivElement>document.getElementById('fps-counter'),
+);
+let fps = rangeFPS.valueAsNumber;
 
 const canvas = <HTMLCanvasElement>(
     document.getElementById('game-of-life-canvas')
 );
 
 const BACKGROUND = '#000000';
-const GRID_COLOR = '#000000';
+const GRID_COLOR = '#0000FF';
 const DEAD_COLOR = '#000000';
-const ALIVE_COLOR = '#FF0000';
-const CELL_SIZE = 2;
-const COLUMNS = 512;
-const ROWS = 256;
-
-let fps = rangeFPS.valueAsNumber;
-
-// Construct the universe, and set its columns and rows.
-const universe = Universe.new(COLUMNS, ROWS);
-
-let isPaused = false;
+const ALIVE_COLOR = '#00FF00';
+const CELL_SIZE = 5;
+const COLUMNS = 100;
+const ROWS = 50;
 
 const sketch = (s: p5) => {
+    let universe: Universe;
+    let isPaused = false;
+
     s.setup = () => {
+        // Construct the universe, and set its columns and rows.
+        universe = Universe.new(COLUMNS, ROWS);
         s.createCanvas(
             (CELL_SIZE + 1) * COLUMNS + 1,
             (CELL_SIZE + 1) * ROWS + 1,
+            s.WEBGL,
         );
         s.background(BACKGROUND);
-        drawGrid();
+        // drawGrid();
         s.frameRate(fps);
     };
 
     s.draw = () => {
-        // ! debugger;
+        s.translate(-s.width / 2, -s.height / 2, 0);
+        // drawGrid();
         drawCells();
+
         if (!isPaused) {
             fpsCounter.render();
             universe.tick();
@@ -64,8 +72,10 @@ const sketch = (s: p5) => {
             s.line(
                 col * (CELL_SIZE + 1),
                 0,
+                // 0,
                 col * (CELL_SIZE + 1),
                 (CELL_SIZE + 1) * ROWS,
+                // 0,
             );
         }
 
@@ -74,8 +84,10 @@ const sketch = (s: p5) => {
             s.line(
                 0,
                 row * (CELL_SIZE + 1),
+                // 0,
                 (CELL_SIZE + 1) * COLUMNS,
                 row * (CELL_SIZE + 1),
+                // 0,
             );
         }
     };
@@ -97,12 +109,26 @@ const sketch = (s: p5) => {
                 }
 
                 if (deltas[idx] === 1) {
-                    s.rect(
+                    s.quad(
                         col * (CELL_SIZE + 1) + 1,
                         row * (CELL_SIZE + 1) + 1,
-                        CELL_SIZE,
-                        CELL_SIZE,
+                        0,
+                        col * (CELL_SIZE + 1) + 1 + CELL_SIZE,
+                        row * (CELL_SIZE + 1) + 1,
+                        0,
+                        col * (CELL_SIZE + 1) + 1 + CELL_SIZE,
+                        row * (CELL_SIZE + 1) + 1 + CELL_SIZE,
+                        0,
+                        col * (CELL_SIZE + 1) + 1,
+                        row * (CELL_SIZE + 1) + 1 + CELL_SIZE,
+                        0,
                     );
+                    // s.rect(
+                    //     col * (CELL_SIZE + 1) + 1,
+                    //     row * (CELL_SIZE + 1) + 1,
+                    //     CELL_SIZE,
+                    //     CELL_SIZE,
+                    // );
                 }
             }
         }
@@ -118,12 +144,26 @@ const sketch = (s: p5) => {
                 }
 
                 if (deltas[idx] === 1) {
-                    s.rect(
+                    s.quad(
                         col * (CELL_SIZE + 1) + 1,
                         row * (CELL_SIZE + 1) + 1,
-                        CELL_SIZE,
-                        CELL_SIZE,
+                        0,
+                        col * (CELL_SIZE + 1) + 1 + CELL_SIZE,
+                        row * (CELL_SIZE + 1) + 1,
+                        0,
+                        col * (CELL_SIZE + 1) + 1 + CELL_SIZE,
+                        row * (CELL_SIZE + 1) + 1 + CELL_SIZE,
+                        0,
+                        col * (CELL_SIZE + 1) + 1,
+                        row * (CELL_SIZE + 1) + 1 + CELL_SIZE,
+                        0,
                     );
+                    // s.rect(
+                    //     col * (CELL_SIZE + 1) + 1,
+                    //     row * (CELL_SIZE + 1) + 1,
+                    //     CELL_SIZE,
+                    //     CELL_SIZE,
+                    // );
                 }
             }
         }
@@ -132,93 +172,46 @@ const sketch = (s: p5) => {
     const getIndex = (row: number, column: number) => {
         return row * COLUMNS + column;
     };
-};
 
-const myp5 = new p5(sketch, canvas);
+    const play = () => {
+        playPauseButtom.textContent = '⏸';
+        isPaused = false;
+    };
 
-const play = () => {
-    playPauseButtom.textContent = '⏸';
-    isPaused = false;
-};
+    const pause = () => {
+        playPauseButtom.textContent = '▶';
+        isPaused = true;
+    };
 
-const pause = () => {
-    playPauseButtom.textContent = '▶';
-    isPaused = true;
-};
-
-playPauseButtom.addEventListener('click', event => {
-    if (isPaused) {
-        play();
-    } else {
-        pause();
-    }
-});
-
-canvas.addEventListener('click', event => {
-    const row = Math.min(Math.floor(myp5.mouseY / (CELL_SIZE + 1)), ROWS - 1);
-    const col = Math.min(
-        Math.floor(myp5.mouseX / (CELL_SIZE + 1)),
-        COLUMNS - 1,
-    );
-    universe.toggle_cell(row, col);
-});
-
-restartButtom.addEventListener('click', event => {
-    universe.restart();
-});
-
-cleanButtom.addEventListener('click', event => {
-    universe.clean();
-});
-
-rangeFPS.addEventListener('change', event => {
-    fps = rangeFPS.valueAsNumber;
-    myp5.frameRate(fps);
-});
-
-const fpsCounter = new (class {
-    fps: HTMLDivElement;
-    frames: Array<number>;
-    lastFrameTimeStamp: number;
-
-    constructor() {
-        this.fps = <HTMLDivElement>document.getElementById('fps-counter');
-        this.frames = [];
-        this.lastFrameTimeStamp = performance.now();
-    }
-
-    render() {
-        // Convert the delta time since the last frame render into a measure
-        // of frames per second.
-        const now = performance.now();
-        const delta = now - this.lastFrameTimeStamp;
-        this.lastFrameTimeStamp = now;
-        const fps = (1 / delta) * 1000;
-
-        // Save only the latest 100 timings.
-        this.frames.push(fps);
-        if (this.frames.length > 100) {
-            this.frames.shift();
+    playPauseButtom.addEventListener('click', event => {
+        if (isPaused) {
+            play();
+        } else {
+            pause();
         }
+    });
 
-        // Find the max, min, and mean of our 100 latest timings.
-        let min = Infinity;
-        let max = -Infinity;
-        let sum = 0;
-        for (let i = 0; i < this.frames.length; i++) {
-            sum += this.frames[i];
-            min = Math.min(this.frames[i], min);
-            max = Math.max(this.frames[i], max);
-        }
-        let mean = sum / this.frames.length;
+    canvas.addEventListener('click', event => {
+        const row = Math.min(Math.floor(s.mouseY / (CELL_SIZE + 1)), ROWS - 1);
+        const col = Math.min(
+            Math.floor(s.mouseX / (CELL_SIZE + 1)),
+            COLUMNS - 1,
+        );
+        universe.toggle_cell(row, col);
+    });
 
-        // Render the statistics.
-        this.fps.textContent = `
-  Frames per Second:
-           latest = ${Math.round(fps)}
-  avg of last 100 = ${Math.round(mean)}
-  min of last 100 = ${Math.round(min)}
-  max of last 100 = ${Math.round(max)}
-  `.trim();
-    }
-})();
+    restartButtom.addEventListener('click', event => {
+        universe.restart();
+    });
+
+    cleanButtom.addEventListener('click', event => {
+        universe.clean();
+    });
+
+    rangeFPS.addEventListener('change', event => {
+        fps = rangeFPS.valueAsNumber;
+        s.frameRate(fps);
+    });
+};
+
+new p5(sketch, canvas);
