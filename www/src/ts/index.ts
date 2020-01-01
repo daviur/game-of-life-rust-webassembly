@@ -45,7 +45,6 @@ const sketch = (s: p5) => {
         s.createCanvas(
             (CELL_SIZE + 1) * COLUMNS + 1,
             (CELL_SIZE + 1) * ROWS + 1,
-            s.WEBGL,
         );
         s.background(BACKGROUND);
         // drawGrid();
@@ -53,7 +52,6 @@ const sketch = (s: p5) => {
     };
 
     s.draw = () => {
-        s.translate(-s.width / 2, -s.height / 2, 0);
         // drawGrid();
         drawCells();
 
@@ -72,10 +70,8 @@ const sketch = (s: p5) => {
             s.line(
                 col * (CELL_SIZE + 1),
                 0,
-                // 0,
                 col * (CELL_SIZE + 1),
-                (CELL_SIZE + 1) * ROWS,
-                // 0,
+                (CELL_SIZE + 1) * ROWS
             );
         }
 
@@ -84,10 +80,8 @@ const sketch = (s: p5) => {
             s.line(
                 0,
                 row * (CELL_SIZE + 1),
-                // 0,
                 (CELL_SIZE + 1) * COLUMNS,
                 row * (CELL_SIZE + 1),
-                // 0,
             );
         }
     };
@@ -109,26 +103,12 @@ const sketch = (s: p5) => {
                 }
 
                 if (deltas[idx] === 1) {
-                    s.quad(
+                    s.rect(
                         col * (CELL_SIZE + 1) + 1,
                         row * (CELL_SIZE + 1) + 1,
-                        0,
-                        col * (CELL_SIZE + 1) + 1 + CELL_SIZE,
-                        row * (CELL_SIZE + 1) + 1,
-                        0,
-                        col * (CELL_SIZE + 1) + 1 + CELL_SIZE,
-                        row * (CELL_SIZE + 1) + 1 + CELL_SIZE,
-                        0,
-                        col * (CELL_SIZE + 1) + 1,
-                        row * (CELL_SIZE + 1) + 1 + CELL_SIZE,
-                        0,
+                        CELL_SIZE,
+                        CELL_SIZE,
                     );
-                    // s.rect(
-                    //     col * (CELL_SIZE + 1) + 1,
-                    //     row * (CELL_SIZE + 1) + 1,
-                    //     CELL_SIZE,
-                    //     CELL_SIZE,
-                    // );
                 }
             }
         }
@@ -144,26 +124,12 @@ const sketch = (s: p5) => {
                 }
 
                 if (deltas[idx] === 1) {
-                    s.quad(
+                    s.rect(
                         col * (CELL_SIZE + 1) + 1,
                         row * (CELL_SIZE + 1) + 1,
-                        0,
-                        col * (CELL_SIZE + 1) + 1 + CELL_SIZE,
-                        row * (CELL_SIZE + 1) + 1,
-                        0,
-                        col * (CELL_SIZE + 1) + 1 + CELL_SIZE,
-                        row * (CELL_SIZE + 1) + 1 + CELL_SIZE,
-                        0,
-                        col * (CELL_SIZE + 1) + 1,
-                        row * (CELL_SIZE + 1) + 1 + CELL_SIZE,
-                        0,
+                        CELL_SIZE,
+                        CELL_SIZE,
                     );
-                    // s.rect(
-                    //     col * (CELL_SIZE + 1) + 1,
-                    //     row * (CELL_SIZE + 1) + 1,
-                    //     CELL_SIZE,
-                    //     CELL_SIZE,
-                    // );
                 }
             }
         }
