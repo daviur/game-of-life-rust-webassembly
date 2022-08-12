@@ -1,7 +1,5 @@
 # `Conway's Game of Life`
 
-[![Build Status](https://travis-ci.com/daviur/game-of-life.svg?branch=master)](https://travis-ci.com/daviur/game-of-life)
-
 **An implementation of the cellular automata.**
 
 Based on the [Rust 🦀 and WebAssembly 🕸 book.](https://rustwasm.github.io/docs/book)
